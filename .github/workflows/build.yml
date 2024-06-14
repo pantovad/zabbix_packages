@@ -22,7 +22,7 @@ jobs:
           context: .
           push: false
           platforms: linux/s390x
-          build-args:
-            - GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            - VERSION: ${{ vars.GITHUB_REF }}
+          build-args: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            VERSION=${{ vars.GITHUB_REF }}
           outputs: type=tar,dest=/dev/null
