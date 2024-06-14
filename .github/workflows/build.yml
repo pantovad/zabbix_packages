@@ -1,0 +1,28 @@
+on:
+  release:
+    types: [published]
+
+# Make sure the GITHUB_TOKEN has permission to upload to our releases
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build 
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          platforms: linux/s390x
+          build-args:
+            - GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - VERSION: ${{ vars.GITHUB_REF }}
+          outputs: type=tar,dest=/dev/null
