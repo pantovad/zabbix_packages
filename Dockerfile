@@ -7,6 +7,7 @@ FROM ubuntu:20.04 AS ubuntu-20.04
 
 ARG VERSION
 ARG GITHUB_TOKEN
+ARG GITHUB_REPOSITORY
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs git gh wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest%2Bubuntu20.04_all.deb && dpkg -i /tmp/zabbix-release_latest+ubuntu20.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-s390x.tar.gz
@@ -18,13 +19,14 @@ RUN cd /tmp && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-pl
 RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
-RUN gh release view ${VERSION} || gh release create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release upload ${VERSION} zabbix*.deb
+RUN gh release -R github.com/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R github.com/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
+RUN cd /tmp && gh release -R github.com/${GITHUB_REPOSITORY} upload ${VERSION} zabbix*.deb
 
 FROM ubuntu:22.04 AS ubuntu-22.04
 
 ARG VERSION
 ARG GITHUB_TOKEN
+ARG GITHUB_REPOSITORY
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs git gh wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest%2Bubuntu22.04_all.deb && dpkg -i /tmp/zabbix-release_latest+ubuntu22.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-s390x.tar.gz
@@ -36,13 +38,14 @@ RUN cd /tmp && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-pl
 RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
-RUN gh release view ${VERSION} || gh release create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release upload ${VERSION} zabbix*.deb
+RUN gh release -R github.com/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R github.com/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
+RUN cd /tmp && gh release -R github.com/${GITHUB_REPOSITORY} upload ${VERSION} zabbix*.deb
 
 FROM rockylinux:9.3 AS rhel-9
 
 ARG VERSION
 ARG GITHUB_TOKEN
+ARG GITHUB_REPOSITORY
 RUN dnf -y install rpm-build dnf-plugins-core gcc golang https://www.rpmfind.net/linux/fedora-secondary/releases/40/Everything/s390x/os/Packages/g/gh-2.45.0-1.fc40.s390x.rpm
 RUN dnf config-manager --set-enabled crb
 RUN dnf -y builddep https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-7.0.0-release1.el9.src.rpm
@@ -51,5 +54,5 @@ RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-ag
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-agent2-plugin-mongodb-7.0.0-release1.el9.src.rpm
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-agent2-plugin-mssql-7.0.0-release1.el9.src.rpm
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-agent2-plugin-postgresql-7.0.0-release1.el9.src.rpm
-RUN gh release view ${VERSION} || gh release create ${VERSION} --notes ${VERSION}
-RUN gh release upload ${VERSION} /root/rpmbuild/RPMS/s390x/zabbix*.rpm /root/rpmbuild/RPMS/noarch/zabbix*.rpm
+RUN gh release -R github.com/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R github.com/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
+RUN gh release -R github.com/${GITHUB_REPOSITORY} upload ${VERSION} /root/rpmbuild/RPMS/s390x/zabbix*.rpm /root/rpmbuild/RPMS/noarch/zabbix*.rpm

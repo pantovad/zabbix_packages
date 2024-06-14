@@ -24,5 +24,6 @@ jobs:
           platforms: linux/s390x
           build-args: |
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-            VERSION=${{ vars.GITHUB_REF }}
+            GITHUB_REPOSITORY=${{ vars.GITHUB_REPOSITORY }}
+            VERSION=${{ vars.GITHUB_REF_NAME }}
           outputs: type=tar,dest=/dev/null
