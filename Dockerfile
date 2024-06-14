@@ -19,7 +19,7 @@ RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-pl
 RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 RUN gh release view ${VERSION} || gh release create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release upload ${VERSION} zabbix*s390x*.deb
+RUN cd /tmp && gh release upload ${VERSION} zabbix*.deb
 
 FROM ubuntu:22.04 AS ubuntu-22.04
 
@@ -37,7 +37,7 @@ RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-pl
 RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 RUN gh release view ${VERSION} || gh release create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release upload ${VERSION} zabbix*s390x*.deb
+RUN cd /tmp && gh release upload ${VERSION} zabbix*.deb
 
 FROM rockylinux:9.3 AS rhel-9
 
