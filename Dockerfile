@@ -3,7 +3,7 @@
 #   VERSION: Required. Used to label the image.
 #   BUILD_DATE: Required. Used to label the image. Should be in the form 'yyyy-mm-ddThh:mm:ssZ', i.e. a date-time from https://tools.ietf.org/html/rfc3339. The timestamp must be in UTC.
 #   VCS_REF: short VCS hash
-FROM ubuntu:22.04 as ubuntu-20.04
+FROM ubuntu:20.04 as ubuntu-20.04
 
 ARG VERSION
 ARG GITHUB_TOKEN
@@ -43,9 +43,10 @@ FROM rockylinux:9.3 as rhel-9
 
 ARG VERSION
 ARG GITHUB_TOKEN
-RUN dnf install rpm-build dnf-plugins-core gh gcc golang https://repo.zabbix.com/zabbix/7.0/rhel/9/x86_64/zabbix-release-latest.el9.noarch.rpm
+RUN dnf -y install rpm-build dnf-plugins-core gcc golang https://repo.zabbix.com/zabbix/7.0/rhel/9/x86_64/zabbix-release-latest.el9.noarch.rpm
+RUN curl -fsSL https://cli.github.com/packages/rpm/gh-cli.repo > /etc/yum.repos.d/github-cli.repo && dnf -y install gh
 RUN dnf config-manager --set-enabled crb
-RUN dnf builddep https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-7.0.0-release1.el9.src.rpm
+RUN dnf -y builddep https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-7.0.0-release1.el9.src.rpm
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-7.0.0-release1.el9.src.rpm
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-agent2-plugin-ember-plus-7.0.0-release1.el9.src.rpm
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-agent2-plugin-mongodb-7.0.0-release1.el9.src.rpm
