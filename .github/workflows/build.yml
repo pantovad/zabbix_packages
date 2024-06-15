@@ -23,8 +23,8 @@ jobs:
           push: false
           platforms: linux/s390x
           build-args: |
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-            GITHUB_SERVER_URL=${{ env.GITHUB_SERVER_URL }}
-            GITHUB_REPOSITORY=${{ env.GITHUB_REPOSITORY }}
-            VERSION=${{ env.GITHUB_REF_NAME }}
+            GITHUB_TOKEN=${{ github.token }}
+            GITHUB_SERVER_URL=${{ github.server_url }}
+            GITHUB_REPOSITORY=${{ github.repository }}
+            VERSION=${{ github.ref_name }}
           outputs: type=tar,dest=/dev/null
