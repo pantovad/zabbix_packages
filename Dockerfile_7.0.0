@@ -16,7 +16,7 @@ RUN cd /tmp/zabbix && apt source zabbix && apt build-dep -y zabbix && cd zabbix-
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
-RUN cd /tmp/zabbix && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 
 FROM ubuntu:22.04 AS ubuntu-18.04
 
@@ -44,7 +44,7 @@ RUN cd /tmp/zabbix && apt source zabbix && apt build-dep -y zabbix && cd zabbix-
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
-RUN cd /tmp/zabbix && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 
 FROM ubuntu:22.04 AS ubuntu-20.04
 
@@ -75,7 +75,7 @@ RUN cd /tmp && apt source zabbix && apt build-dep -y zabbix && cd zabbix-* && dp
 RUN cd /tmp && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
+RUN cd /tmp && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
 RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} zabbix*.deb
 
@@ -95,7 +95,7 @@ RUN cd /tmp && apt source zabbix && apt build-dep -y zabbix && cd zabbix-* && dp
 RUN cd /tmp && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
+RUN cd /tmp && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
 RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} zabbix*.deb
 
