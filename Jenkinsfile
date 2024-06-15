@@ -36,18 +36,13 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'github_access_token_zabbix_s390x_deploy', variable: 'GITHUB_TOKEN')]) {
           script{
-            def target = ""
-            if(params.TARGET != "all") {
-              target = " --target " + params.TARGET
-            } else {
-              env.DOCKER_BUILDKIT = "0"
-            }
             docker_image = docker.build("notag",
               " --build-arg VERSION=${params.VERSION}" +
               " --build-arg GITHUB_REPOSITORY=${env.GITHUB_REPOSITORY}" +
               " --build-arg GITHUB_SERVER_URL=${env.GITHUB_SERVER_URL}" +
               " --build-arg GITHUB_TOKEN=" + env.GITHUB_TOKEN +
-              " --output type=tar,dest=/dev/null" + target +
+              " --output type=tar,dest=/dev/null" +
+              " --target " + params.TARGET +
               " --file Dockerfile_${env.VERSION} .")
           }
         }
