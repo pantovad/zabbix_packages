@@ -3,11 +3,23 @@
 #   VERSION: Required. Used to label the image.
 #   BUILD_DATE: Required. Used to label the image. Should be in the form 'yyyy-mm-ddThh:mm:ssZ', i.e. a date-time from https://tools.ietf.org/html/rfc3339. The timestamp must be in UTC.
 #   VCS_REF: short VCS hash
+FROM ubuntu:18.04 AS ubuntu-18.04
+
+ARG VERSION
+ARG GITHUB_TOKEN
+ARG GITHUB_REPOSITORY
+ARG GITHUB_SERVER_URL
+RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs git gh wget
+RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest%2Bubuntu18.04_all.deb && dpkg -i /tmp/zabbix-release_latest+ubuntu18.04_all.deb
+RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-s390x.tar.gz
+ENV PATH=PATH=$PATH:/usr/local/go/bin
+
 FROM ubuntu:20.04 AS ubuntu-20.04
 
 ARG VERSION
 ARG GITHUB_TOKEN
 ARG GITHUB_REPOSITORY
+ARG GITHUB_SERVER_URL
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs git gh wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest%2Bubuntu20.04_all.deb && dpkg -i /tmp/zabbix-release_latest+ubuntu20.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-s390x.tar.gz
@@ -27,6 +39,7 @@ FROM ubuntu:22.04 AS ubuntu-22.04
 ARG VERSION
 ARG GITHUB_TOKEN
 ARG GITHUB_REPOSITORY
+ARG GITHUB_SERVER_URL
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs git gh wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest%2Bubuntu22.04_all.deb && dpkg -i /tmp/zabbix-release_latest+ubuntu22.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-s390x.tar.gz
@@ -41,11 +54,29 @@ RUN cd /tmp && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin
 RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
 RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} zabbix*.deb
 
-FROM rockylinux:9.3 AS rhel-9
+FROM rockylinux:8 AS rhel-8
 
 ARG VERSION
 ARG GITHUB_TOKEN
 ARG GITHUB_REPOSITORY
+ARG GITHUB_SERVER_URL
+RUN dnf -y install rpm-build dnf-plugins-core gcc golang https://www.rpmfind.net/linux/fedora-secondary/releases/39/Everything/s390x/os/Packages/g/gh-2.35.0-1.fc39.s390x.rpm
+RUN dnf config-manager --set-enabled crb
+RUN dnf -y builddep https://repo.zabbix.com/zabbix/7.0/rhel/8/SRPMS/zabbix-7.0.0-release1.el8.src.rpm
+RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/8/SRPMS/zabbix-7.0.0-release1.el8.src.rpm
+RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/8/SRPMS/zabbix-agent2-plugin-ember-plus-7.0.0-release1.el8.src.rpm
+RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/8/SRPMS/zabbix-agent2-plugin-mongodb-7.0.0-release1.el8.src.rpm
+RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/8/SRPMS/zabbix-agent2-plugin-mssql-7.0.0-release1.el8.src.rpm
+RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/8/SRPMS/zabbix-agent2-plugin-postgresql-7.0.0-release1.el8.src.rpm
+RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
+RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} /root/rpmbuild/RPMS/s390x/zabbix*.rpm /root/rpmbuild/RPMS/noarch/zabbix*.rpm
+
+FROM rockylinux:9 AS rhel-9
+
+ARG VERSION
+ARG GITHUB_TOKEN
+ARG GITHUB_REPOSITORY
+ARG GITHUB_SERVER_URL
 RUN dnf -y install rpm-build dnf-plugins-core gcc golang https://www.rpmfind.net/linux/fedora-secondary/releases/40/Everything/s390x/os/Packages/g/gh-2.45.0-1.fc40.s390x.rpm
 RUN dnf config-manager --set-enabled crb
 RUN dnf -y builddep https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-7.0.0-release1.el9.src.rpm
