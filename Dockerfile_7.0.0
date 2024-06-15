@@ -5,7 +5,10 @@
 #   VCS_REF: short VCS hash
 FROM ubuntu:18.04 AS ubuntu-18.04-build
 
-RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs wget
+RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y software-properties-common build-essential equivs wget
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
+RUN apt install -y gcc-9  g++-9
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest%2Bubuntu18.04_all.deb && dpkg -i /tmp/zabbix-release_latest+ubuntu18.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-s390x.tar.gz
 ENV PATH=PATH=$PATH:/usr/local/go/bin
@@ -17,7 +20,6 @@ RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-postgresql && cd zabbix-ag
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
-
 
 FROM ubuntu:22.04 AS ubuntu-18.04
 
@@ -46,7 +48,6 @@ RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-postgresql && cd zabbix-ag
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
-
 
 FROM ubuntu:22.04 AS ubuntu-20.04
 
