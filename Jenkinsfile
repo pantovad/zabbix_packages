@@ -36,7 +36,7 @@ pipeline {
         withCredentials([string(credentialsId: 'github_access_token_zabbix_s390x_deploy', variable: 'GITHUB_TOKEN')]) {
           script{
             def target = ""
-            if(params.TARGET != "all") { target = params.TARGET }
+            if(params.TARGET != "all") { target = " --target " + params.TARGET }
             docker_image = docker.build("notag",
               " --build-arg VERSION=${params.VERSION}" +
               " --build-arg GITHUB_REPOSITORY=${env.GITHUB_REPOSITORY}" +
