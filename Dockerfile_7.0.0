@@ -5,7 +5,7 @@
 #   VCS_REF: short VCS hash
 FROM ubuntu:18.04 AS ubuntu-18.04-build
 
-RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs git gh wget
+RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest%2Bubuntu18.04_all.deb && dpkg -i /tmp/zabbix-release_latest+ubuntu18.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-s390x.tar.gz
 ENV PATH=PATH=$PATH:/usr/local/go/bin
@@ -34,7 +34,7 @@ RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${
 
 FROM ubuntu:20.04 AS ubuntu-20.04-build
 
-RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs git gh wget
+RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest%2Bubuntu20.04_all.deb && dpkg -i /tmp/zabbix-release_latest+ubuntu20.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-s390x.tar.gz
 ENV PATH=PATH=$PATH:/usr/local/go/bin
