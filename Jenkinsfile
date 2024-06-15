@@ -1,7 +1,8 @@
+def distros = ['all', 'ubuntu-18.04', 'ubuntu-20.04', 'ubuntu-22.04', 'ubuntu-24.04', 'rhel-9']
 pipeline {
   parameters {
     choice(name: 'VERSION', choices: ['7.0.0'], description: 'Select Version')
-    choice(name: 'TARGET', choices: ['all', 'ubuntu-18.04', 'ubuntu-20.04', 'ubuntu-22.04', 'ubuntu-24.04', 'rhel-9'], description: 'Select Target Distro')
+    choice(name: 'TARGET', choices: distros, description: 'Select Target Distro')
   }
   agent {
     label 'smd_ibm'
@@ -39,7 +40,7 @@ pipeline {
             if(params.TARGET != "all") {
               target = " --target " + params.TARGET
             } else {
-              for( item in params.TARGET) {
+              for( item in distros) {
                 target = target + " --target " + item
               }
             }
