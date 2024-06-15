@@ -3,36 +3,63 @@
 #   VERSION: Required. Used to label the image.
 #   BUILD_DATE: Required. Used to label the image. Should be in the form 'yyyy-mm-ddThh:mm:ssZ', i.e. a date-time from https://tools.ietf.org/html/rfc3339. The timestamp must be in UTC.
 #   VCS_REF: short VCS hash
-FROM ubuntu:18.04 AS ubuntu-18.04
+FROM ubuntu:18.04 AS ubuntu-18.04-build
 
-ARG VERSION
-ARG GITHUB_TOKEN
-ARG GITHUB_REPOSITORY
-ARG GITHUB_SERVER_URL
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs git gh wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest%2Bubuntu18.04_all.deb && dpkg -i /tmp/zabbix-release_latest+ubuntu18.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-s390x.tar.gz
 ENV PATH=PATH=$PATH:/usr/local/go/bin
 
-FROM ubuntu:20.04 AS ubuntu-20.04
+RUN apt update -y
+RUN mkdir /tmp/zabbix
+RUN cd /tmp/zabbix && apt source zabbix && apt build-dep -y zabbix && cd zabbix-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
+
+
+FROM ubuntu:22.04 AS ubuntu-18.04
 
 ARG VERSION
 ARG GITHUB_TOKEN
 ARG GITHUB_REPOSITORY
 ARG GITHUB_SERVER_URL
+
+RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y gh
+RUN mkdir /tmp/zabbix
+COPY --from=ubuntu-18.04-build /tmp/zabbix/zabbix*.deb /tmp/zabbix/
+RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
+RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} /tmp/zabbix/zabbix*.deb
+
+FROM ubuntu:20.04 AS ubuntu-20.04-build
+
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs git gh wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest%2Bubuntu20.04_all.deb && dpkg -i /tmp/zabbix-release_latest+ubuntu20.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-s390x.tar.gz
 ENV PATH=PATH=$PATH:/usr/local/go/bin
 
 RUN apt update -y
-RUN cd /tmp && apt source zabbix && apt build-dep -y zabbix && cd zabbix-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
+RUN mkdir /tmp/zabbix
+RUN cd /tmp/zabbix && apt source zabbix && apt build-dep -y zabbix && cd zabbix-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
+
+
+FROM ubuntu:22.04 AS ubuntu-20.04
+
+ARG VERSION
+ARG GITHUB_TOKEN
+ARG GITHUB_REPOSITORY
+ARG GITHUB_SERVER_URL
+
+RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y gh
+RUN mkdir /tmp/zabbix
+COPY --from=ubuntu-20.04-build /tmp/zabbix/zabbix*.deb /tmp/zabbix/
 RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} zabbix*.deb
+RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} /tmp/zabbix/zabbix*.deb
 
 FROM ubuntu:22.04 AS ubuntu-22.04
 
