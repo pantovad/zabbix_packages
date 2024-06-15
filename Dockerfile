@@ -19,8 +19,8 @@ RUN cd /tmp && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-pl
 RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
-RUN gh release -R github.com/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R github.com/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release -R github.com/${GITHUB_REPOSITORY} upload ${VERSION} zabbix*.deb
+RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
+RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} zabbix*.deb
 
 FROM ubuntu:22.04 AS ubuntu-22.04
 
@@ -38,8 +38,8 @@ RUN cd /tmp && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-pl
 RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plzabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp && apt source zzabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
-RUN gh release -R github.com/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R github.com/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release -R github.com/${GITHUB_REPOSITORY} upload ${VERSION} zabbix*.deb
+RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
+RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} zabbix*.deb
 
 FROM rockylinux:9.3 AS rhel-9
 
@@ -54,5 +54,5 @@ RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-ag
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-agent2-plugin-mongodb-7.0.0-release1.el9.src.rpm
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-agent2-plugin-mssql-7.0.0-release1.el9.src.rpm
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-agent2-plugin-postgresql-7.0.0-release1.el9.src.rpm
-RUN gh release -R github.com/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R github.com/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN gh release -R github.com/${GITHUB_REPOSITORY} upload ${VERSION} /root/rpmbuild/RPMS/s390x/zabbix*.rpm /root/rpmbuild/RPMS/noarch/zabbix*.rpm
+RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
+RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} /root/rpmbuild/RPMS/s390x/zabbix*.rpm /root/rpmbuild/RPMS/noarch/zabbix*.rpm
