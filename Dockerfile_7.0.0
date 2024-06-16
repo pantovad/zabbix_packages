@@ -67,11 +67,12 @@ RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/lo
 ENV PATH=PATH=$PATH:/usr/local/go/bin
 
 RUN apt update -y
-RUN cd /tmp && apt source zabbix && apt build-dep -y zabbix && cd zabbix-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
+RUN mkdir /tmp/zabbix
+RUN cd /tmp/zabbix && apt source zabbix && apt build-dep -y zabbix && cd zabbix-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 
 FROM ubuntu:22.04 AS ubuntu-22.04
 
@@ -94,11 +95,12 @@ RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-s390x.tar.gz && tar -C /usr/lo
 ENV PATH=PATH=$PATH:/usr/local/go/bin
 
 RUN apt update -y
-RUN cd /tmp && apt source zabbix && apt build-dep -y zabbix && cd zabbix-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
-RUN cd /tmp && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
+RUN mkdir /tmp/zabbix
+RUN cd /tmp/zabbix && apt source zabbix && apt build-dep -y zabbix && cd zabbix-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
+RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 
 FROM ubuntu:24.04 AS ubuntu-24.04
 
