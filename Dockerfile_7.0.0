@@ -117,7 +117,7 @@ RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --
 
 FROM rockylinux:9 AS rhel-9-build
 
-RUN dnf -y install rpm-build dnf-plugins-core gcc golang https://www.rpmfind.net/linux/fedora-secondary/releases/40/Everything/s390x/os/Packages/g/gh-2.45.0-1.fc40.s390x.rpm
+RUN dnf -y install rpm-build dnf-plugins-core gcc golang
 RUN dnf config-manager --set-enabled crb
 RUN dnf -y builddep https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-7.0.0-release1.el9.src.rpm
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-7.0.0-release1.el9.src.rpm
