@@ -29,7 +29,7 @@ RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y gh ca-certifi
 RUN mkdir /tmp/zabbix
 COPY --from=ubuntu-18.04-build /tmp/zabbix/zabbix*.deb /tmp/zabbix/
 RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} /tmp/zabbix/zabbix*.deb
+RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --clobber ${VERSION} /tmp/zabbix/zabbix*.deb
 
 FROM ubuntu:20.04 AS ubuntu-20.04-build
 
@@ -57,7 +57,7 @@ RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y gh ca-certifi
 RUN mkdir /tmp/zabbix
 COPY --from=ubuntu-20.04-build /tmp/zabbix/zabbix*.deb /tmp/zabbix/
 RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} /tmp/zabbix/zabbix*.deb
+RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --clobber ${VERSION} /tmp/zabbix/zabbix*.deb
 
 FROM ubuntu:22.04 AS ubuntu-22.04-build
 
@@ -85,7 +85,7 @@ RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y gh ca-certifi
 RUN mkdir /tmp/zabbix
 COPY --from=ubuntu-22.04-build /tmp/zabbix/zabbix*.deb /tmp/zabbix/
 RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} /tmp/zabbix/zabbix*.deb
+RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --clobber ${VERSION} /tmp/zabbix/zabbix*.deb
 
 FROM ubuntu:24.04 AS ubuntu-24.04-build
 
@@ -113,7 +113,7 @@ RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y gh ca-certifi
 RUN mkdir /tmp/zabbix
 COPY --from=ubuntu-24.04-build /tmp/zabbix/zabbix*.deb /tmp/zabbix/
 RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} /tmp/zabbix/zabbix*.deb
+RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --clobber ${VERSION} /tmp/zabbix/zabbix*.deb
 
 FROM rockylinux:9 AS rhel-9-build
 
@@ -138,7 +138,7 @@ RUN mkdir /tmp/zabbix
 COPY --from=rhel-9-build /root/rpmbuild/RPMS/s390x/zabbix*.rpm /tmp/zabbix/
 COPY --from=rhel-9-build /root/rpmbuild/RPMS/noarch/zabbix*.rpm /tmp/zabbix/
 RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} /tmp/zabbix/zabbix*.rpm
+RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --clobber ${VERSION} /tmp/zabbix/zabbix*.rpm
 
 FROM ubuntu:24.04 AS all
 
@@ -156,4 +156,4 @@ COPY --from=ubuntu-24.04-build /tmp/zabbix/zabbix*.deb /tmp/zabbix/
 COPY --from=rhel-9-build /root/rpmbuild/RPMS/s390x/zabbix*.rpm /tmp/zabbix/
 COPY --from=rhel-9-build /root/rpmbuild/RPMS/noarch/zabbix*.rpm /tmp/zabbix/
 RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload ${VERSION} /tmp/zabbix/zabbix*
+RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --clobber ${VERSION} /tmp/zabbix/zabbix*
