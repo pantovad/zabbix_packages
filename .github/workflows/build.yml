@@ -1,6 +1,25 @@
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Select Version'
+        required: true
+        default: '7.0.0'
+        type: choice
+        options:
+          - '7.0.0'
+      target:
+        description: 'Select Target Distro'
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - ubuntu-18.04
+          - ubuntu-20.04
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - rhel-9
 
 # Make sure the GITHUB_TOKEN has permission to upload to our releases
 permissions:
@@ -20,11 +39,13 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          dockerfile: Dockerfile-${{ inputs.version }}
           push: false
           platforms: linux/s390x
           build-args: |
             GITHUB_TOKEN=${{ github.token }}
             GITHUB_SERVER_URL=${{ github.server_url }}
             GITHUB_REPOSITORY=${{ github.repository }}
-            VERSION=${{ github.ref_name }}
+            VERSION=${{ inputs.version }}
           outputs: type=tar,dest=/dev/null
+          target: ${{ inputs.target }}
