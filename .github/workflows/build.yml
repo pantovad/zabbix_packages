@@ -39,7 +39,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          dockerfile: Dockerfile-${{ inputs.version }}
+          file: Dockerfile-${{ inputs.version }}
           push: false
           platforms: linux/s390x
           build-args: |
