@@ -42,6 +42,7 @@ pipeline {
               " --build-arg GITHUB_SERVER_URL=${env.GITHUB_SERVER_URL}" +
               " --build-arg GITHUB_TOKEN=" + env.GITHUB_TOKEN +
               " --output type=tar,dest=/dev/null" +
+              " --platform linux/s390x" +
               " --target " + params.TARGET +
               " --file Dockerfile_${env.VERSION} .")
           }
