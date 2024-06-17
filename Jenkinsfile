@@ -1,6 +1,6 @@
 pipeline {
   parameters {
-    choice(name: 'VERSION', choices: ['7.0.0'], description: 'Select Version')
+    choice(name: 'VERSION', choices: ['7.0.0'], description: 'Select Zabbix Version')
     choice(name: 'TARGET', choices: ['all', 'ubuntu-18.04', 'ubuntu-20.04', 'ubuntu-22.04', 'ubuntu-24.04', 'rhel-9'], description: 'Select Target Distro')
   }
   agent {
