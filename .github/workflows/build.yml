@@ -2,7 +2,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Select Version'
+        description: 'Select Zabbix Version'
         required: true
         default: '7.0.0'
         type: choice
