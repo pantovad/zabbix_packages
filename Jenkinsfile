@@ -1,10 +1,12 @@
+def agents = ["linux/amd64": "cicd_amd64", "linux/s390x": "smd_s390x"]
 pipeline {
   parameters {
     choice(name: 'VERSION', choices: ['7.0.0'], description: 'Select Zabbix Version')
     choice(name: 'TARGET', choices: ['all', 'ubuntu-18.04', 'ubuntu-20.04', 'ubuntu-22.04', 'ubuntu-24.04', 'rhel-9'], description: 'Select Target Distro')
+    choice(name: 'PLATFORM', choices: ['linux/amd64', 'linux/s390x'], description: 'Select Target Platform')
   }
   agent {
-    label 'smd_ibm'
+    label agents[params.CLIENT]
   }
   options {
     ansiColor('xterm')
@@ -31,6 +33,7 @@ pipeline {
     stage('Build packages') {
       environment {
         BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%SZ'").trim()
+        ARCH = sh(returnStdout: true, script: "uname -m").trim()
       }
       steps {
         withCredentials([string(credentialsId: 'github_access_token_zabbix_s390x_deploy', variable: 'GITHUB_TOKEN')]) {
@@ -40,8 +43,9 @@ pipeline {
               " --build-arg GITHUB_REPOSITORY=${env.GITHUB_REPOSITORY}" +
               " --build-arg GITHUB_SERVER_URL=${env.GITHUB_SERVER_URL}" +
               " --build-arg GITHUB_TOKEN=" + env.GITHUB_TOKEN +
+              " --build-arg ARCH=" + env.ARCH +
               " --output type=tar,dest=/dev/null" +
-              " --platform linux/s390x" +
+              " --platform " + params.PLATFORM +
               " --target " + params.TARGET +
               " --file Dockerfile_${env.VERSION} .")
           }

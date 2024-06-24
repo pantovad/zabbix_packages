@@ -20,6 +20,14 @@ on:
           - ubuntu-22.04
           - ubuntu-24.04
           - rhel-9
+      platform:
+        description: 'Select Target Platform'
+        required: true
+        default: linux/amd64
+        type: choice
+        options:
+        - linux/amd64
+        - linux/s390x
 
 # Make sure the GITHUB_TOKEN has permission to upload to our releases
 permissions:
@@ -29,6 +37,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Set env
+        run: echo "ARCH=$(uname -m)" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up QEMU
@@ -41,11 +51,12 @@ jobs:
           context: .
           file: Dockerfile_${{ inputs.version }}
           push: false
-          platforms: linux/s390x
+          platforms: ${{ inputs.platform }}
           build-args: |
             GITHUB_TOKEN=${{ github.token }}
             GITHUB_SERVER_URL=${{ github.server_url }}
             GITHUB_REPOSITORY=${{ github.repository }}
             VERSION=${{ inputs.version }}
+            ARCH=${{ env.ARCH }}
           outputs: type=tar,dest=/dev/null
           target: ${{ inputs.target }}
