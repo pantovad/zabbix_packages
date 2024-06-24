@@ -1,2 +1,2 @@
-# zabbix_s390x
-Provide Zabbix Linux packages for s390x
+# zabbix_packages
+Provide Zabbix Linux packages
