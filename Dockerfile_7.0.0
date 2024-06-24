@@ -9,6 +9,8 @@
 ####################################################################
 FROM ubuntu:18.04 AS ubuntu-18.04-build
 
+ARG TARGETARCH
+
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y software-properties-common build-essential equivs wget gcc libldap2-dev libcurl4-openssl-dev zlib1g-dev
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-1%2Bubuntu18.04_all.deb && dpkg -i /tmp/zabbix-release_7.0-1+ubuntu18.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-${TARGETARCH}.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-${TARGETARCH}.tar.gz
@@ -22,7 +24,7 @@ RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-ag
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 
-FROM ubuntu:22.04 AS ubuntu-18.04
+FROM ubuntu:24.04 AS ubuntu-18.04
 
 ARG VERSION
 ARG GITHUB_TOKEN
@@ -37,6 +39,8 @@ RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --
 
 FROM ubuntu:20.04 AS ubuntu-20.04-build
 
+ARG TARGETARCH
+
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-1%2Bubuntu20.04_all.deb && dpkg -i /tmp/zabbix-release_7.0-1+ubuntu20.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-${TARGETARCH}.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-${TARGETARCH}.tar.gz
@@ -50,7 +54,7 @@ RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-ag
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 
-FROM ubuntu:22.04 AS ubuntu-20.04
+FROM ubuntu:24.04 AS ubuntu-20.04
 
 ARG VERSION
 ARG GITHUB_TOKEN
@@ -65,6 +69,8 @@ RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --
 
 FROM ubuntu:22.04 AS ubuntu-22.04-build
 
+ARG TARGETARCH
+
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-1%2Bubuntu22.04_all.deb && dpkg -i /tmp/zabbix-release_7.0-1+ubuntu22.04_all.deb
 RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-${TARGETARCH}.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-${TARGETARCH}.tar.gz
@@ -78,7 +84,7 @@ RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-ag
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
 RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
 
-FROM ubuntu:22.04 AS ubuntu-22.04
+FROM ubuntu:24.04 AS ubuntu-22.04
 
 ARG VERSION
 ARG GITHUB_TOKEN
@@ -92,6 +98,8 @@ RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || g
 RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --clobber ${VERSION} /tmp/zabbix/*.deb
 
 FROM ubuntu:24.04 AS ubuntu-24.04-build
+
+ARG TARGETARCH
 
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y build-essential equivs wget
 RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-1%2Bubuntu24.04_all.deb && dpkg -i /tmp/zabbix-release_7.0-1+ubuntu24.04_all.deb
