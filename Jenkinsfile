@@ -6,7 +6,7 @@ pipeline {
     choice(name: 'PLATFORM', choices: ['linux/amd64', 'linux/s390x'], description: 'Select Target Platform')
   }
   agent {
-    label agents[params.CLIENT]
+    label agents[params.PLATFORM]
   }
   options {
     ansiColor('xterm')
