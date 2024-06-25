@@ -47,7 +47,7 @@ pipeline {
               " --output type=tar,dest=/dev/null" +
               " --platform " + params.PLATFORM +
               " --target " + params.TARGET +
-              " --file Dockerfile_${env.VERSION} .")
+              " --file Dockerfile.${env.VERSION} .")
           }
         }
       }
