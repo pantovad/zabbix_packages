@@ -7,36 +7,6 @@
 #   GITHUB_SERVER_URL: GitHub server url
 #   ARCH: Value of $(uname -m)
 ####################################################################
-FROM ubuntu:18.04 AS ubuntu-18.04-build
-
-ARG TARGETARCH
-
-RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y software-properties-common build-essential equivs wget gcc libldap2-dev libcurl4-openssl-dev zlib1g-dev
-RUN wget -P /tmp https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-2%2Bubuntu18.04_all.deb && dpkg -i /tmp/zabbix-release_7.0-2+ubuntu18.04_all.deb
-RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-${TARGETARCH}.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-${TARGETARCH}.tar.gz
-ENV PATH=PATH=$PATH:/usr/local/go/bin
-
-RUN apt update -y
-RUN mkdir /tmp/zabbix
-RUN cd /tmp/zabbix && apt source zabbix && apt build-dep -y zabbix && cd zabbix-* && dpkg-buildpackage -uc -us
-RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-postgresql && cd zabbix-agent2-plugin-postgresql-* && dpkg-buildpackage -uc -us
-RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-ember-plus && cd zabbix-agent2-plugin-ember-plus-* && dpkg-buildpackage -uc -us
-RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mongodb && cd zabbix-agent2-plugin-mongodb-* && dpkg-buildpackage -uc -us
-RUN cd /tmp/zabbix && apt source zabbix-agent2-plugin-mssql && cd zabbix-agent2-plugin-mssql-* && dpkg-buildpackage -uc -us
-
-FROM ubuntu:24.04 AS ubuntu-18.04
-
-ARG VERSION
-ARG GITHUB_TOKEN
-ARG GITHUB_REPOSITORY
-ARG GITHUB_SERVER_URL
-
-RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y gh ca-certificates
-RUN mkdir /tmp/zabbix
-COPY --from=ubuntu-18.04-build /tmp/zabbix/*.deb /tmp/zabbix/
-RUN gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} view ${VERSION} || gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} create ${VERSION} --notes ${VERSION}
-RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --clobber ${VERSION} /tmp/zabbix/*.deb
-
 FROM ubuntu:20.04 AS ubuntu-20.04-build
 
 ARG TARGETARCH
@@ -165,7 +135,6 @@ ARG ARCH
 
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y gh ca-certificates
 RUN mkdir /tmp/zabbix
-COPY --from=ubuntu-18.04-build /tmp/zabbix/*.deb /tmp/zabbix/
 COPY --from=ubuntu-20.04-build /tmp/zabbix/*.deb /tmp/zabbix/
 COPY --from=ubuntu-22.04-build /tmp/zabbix/*.deb /tmp/zabbix/
 COPY --from=ubuntu-24.04-build /tmp/zabbix/*.deb /tmp/zabbix/
