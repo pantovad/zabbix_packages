@@ -100,9 +100,12 @@ RUN cd /tmp && gh release -R ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} upload --
 FROM rockylinux:9 AS rhel-9-build
 
 ARG VERSION
+ARG TARGETARCH
 
-RUN dnf -y install rpm-build dnf-plugins-core gcc golang
+RUN dnf -y install rpm-build dnf-plugins-core gcc
 RUN dnf config-manager --set-enabled crb
+RUN wget -P /tmp https://go.dev/dl/go1.22.4.linux-${TARGETARCH}.tar.gz && tar -C /usr/local -xzf /tmp/go1.22.4.linux-${TARGETARCH}.tar.gz
+ENV PATH=PATH=$PATH:/usr/local/go/bin
 RUN dnf -y builddep https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-${VERSION}-release1.el9.src.rpm
 RUN rpmbuild --rebuild --define='build_agent2 1' https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-${VERSION}-release1.el9.src.rpm
 RUN rpmbuild --rebuild https://repo.zabbix.com/zabbix/7.0/rhel/9/SRPMS/zabbix-agent2-plugin-ember-plus-${VERSION}-release1.el9.src.rpm
