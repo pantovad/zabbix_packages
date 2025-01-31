@@ -1,7 +1,7 @@
 def agents = ["linux/amd64": "cicd_amd64", "linux/s390x": "smd_s390x"]
 pipeline {
   parameters {
-    choice(name: 'VERSION', choices: ['7.0.8', '7.0.7', '7.0.6', '7.0.5', '7.0.4', '7.0.3', '7.0.2', '7.0.1', '7.0.0'], description: 'Select Zabbix Version')
+    choice(name: 'VERSION', choices: ['7.0.9', '7.0.8', '7.0.7', '7.0.6', '7.0.5', '7.0.4', '7.0.3', '7.0.2', '7.0.1', '7.0.0'], description: 'Select Zabbix Version')
     choice(name: 'TARGET', choices: ['all', 'ubuntu-20.04', 'ubuntu-22.04', 'ubuntu-24.04', 'rhel-9'], description: 'Select Target Distro')
     choice(name: 'PLATFORM', choices: ['linux/amd64', 'linux/s390x'], description: 'Select Target Platform')
   }
