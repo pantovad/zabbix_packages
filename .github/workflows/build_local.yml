@@ -46,8 +46,17 @@ permissions:
   contents: write
 
 jobs:
+  prereq:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set runner
+        run: |
+          echo "Setting runner to ${{ github.event.inputs.runner }}"
+    outputs:
+      runner: ${{ github.event.inputs.runner }}
   build:
-    runs-on: ${{ inputs.runner }}
+    needs: prereq
+    runs-on: ${{ needs.prereq.outputs.runner }}
     steps:
       - name: Set env
         run: echo "ARCH=$(uname -m)" >> $GITHUB_ENV
