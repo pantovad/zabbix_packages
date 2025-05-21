@@ -32,31 +32,19 @@ on:
           - ubuntu-22.04
           - ubuntu-24.04
           - rhel-9
-      runner:
-        description: 'Select Target Runner'
-        required: true
-        default: ubuntu-latest
-        type: choice
-        options:
-        - ubuntu-latest
-        - ubuntu-latest-s390x
 
 # Make sure the GITHUB_TOKEN has permission to upload to our releases
 permissions:
   contents: write
 
 jobs:
-  prereq:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set runner
-        run: |
-          echo "Setting runner to ${{ github.event.inputs.runner }}"
-    outputs:
-      runner: ${{ github.event.inputs.runner }}
   build:
-    needs: prereq
-    runs-on: ${{ needs.prereq.outputs.runner }}
+    strategy:
+      matrix: 
+        runner:
+          - ubuntu-latest
+          - ubuntu-latest-s390x
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Set env
         run: echo "ARCH=$(uname -m)" >> $GITHUB_ENV
@@ -71,9 +59,9 @@ jobs:
           file: Dockerfile.${{ inputs.version }}
           push: false
           build-args: |
-            GITHUB_TOKEN=${{ github.token }}
-            GITHUB_SERVER_URL=${{ github.server_url }}
-            GITHUB_REPOSITORY=${{ github.repository }}
+            GITHUB_TOKEN=${{ secrets.ZABBIX_PACKAGES_DEPLOY_TOKEN }}
+            GITHUB_SERVER_URL="https://github.com/"
+            GITHUB_REPOSITORY="pantovad/zabbix_packages"
             VERSION=${{ inputs.version }}
             ARCH=${{ env.ARCH }}
           outputs: type=tar,dest=/dev/null
