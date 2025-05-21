@@ -1,0 +1,71 @@
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Select Zabbix Version'
+        required: true
+        default: '7.0.13'
+        type: choice
+        options:
+          - '7.0.0'
+          - '7.0.1'
+          - '7.0.2'
+          - '7.0.3'
+          - '7.0.4'
+          - '7.0.5'
+          - '7.0.6'
+          - '7.0.7'
+          - '7.0.8'
+          - '7.0.9'
+          - '7.0.10'
+          - '7.0.11'
+          - '7.0.12'
+          - '7.0.13'
+      target:
+        description: 'Select Target Distro'
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - ubuntu-20.04
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - rhel-9
+      runner:
+        description: 'Select Target Runner'
+        required: true
+        default: ubuntu-latest
+        type: choice
+        options:
+        - ubuntu-latest
+        - ubuntu-latest-s390x
+
+# Make sure the GITHUB_TOKEN has permission to upload to our releases
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - name: Set env
+        run: echo "ARCH=$(uname -m)" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build 
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.${{ inputs.version }}
+          push: false
+          build-args: |
+            GITHUB_TOKEN=${{ github.token }}
+            GITHUB_SERVER_URL=${{ github.server_url }}
+            GITHUB_REPOSITORY=${{ github.repository }}
+            VERSION=${{ inputs.version }}
+            ARCH=${{ env.ARCH }}
+          outputs: type=tar,dest=/dev/null
+          target: ${{ inputs.target }}
