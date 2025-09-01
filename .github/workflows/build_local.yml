@@ -4,7 +4,7 @@ on:
       version:
         description: 'Select Zabbix Version'
         required: true
-        default: '7.0.17'
+        default: '7.0.18'
         type: choice
         options:
           - '7.0.0'
@@ -25,6 +25,7 @@ on:
           - '7.0.15'
           - '7.0.16'
           - '7.0.17'
+          - '7.0.18'
       target:
         description: 'Select Target Distro'
         required: true
